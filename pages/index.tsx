@@ -4,7 +4,7 @@ import GithubSearch from '../lib/GithubSearch/GithubSearch'
 
 const Home: NextPage = () => {
   return (
-    <GithubSearch />
+    <GithubSearch token={process.env.NEXT_PUBLIC_GITHUB_PAT} />
   )
 }
 

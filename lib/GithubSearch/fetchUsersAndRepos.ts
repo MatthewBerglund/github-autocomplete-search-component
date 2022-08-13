@@ -1,10 +1,21 @@
-async function fetchUsersAndRepos(searchQuery: string) {
+async function fetchUsersAndRepos(searchQuery: string, token?: string) {
   const baseURL = 'https://api.github.com/search/';
-  const usersURL = baseURL + `users?q=${encodeURIComponent(`${searchQuery} in:login`)}&per_page=100`;
-  const reposURL = baseURL + `repositories?q=${encodeURIComponent(`${searchQuery} in:name`)}&per_page=100`;
+  const usersURL = baseURL + `users?q=${encodeURIComponent(`${searchQuery} in:login`)}&per_page=50`;
+  const reposURL = baseURL + `repositories?q=${encodeURIComponent(`${searchQuery} in:name`)}&per_page=50`;
+
+  const requestOptions: RequestInit = { 'method': 'GET' };
+
+  if (token) {
+    const headers = new Headers();
+    headers.append('Authorization', `Bearer ${token}`);
+    requestOptions.headers = headers;
+  }
 
   try {
-    const [usersRes, reposRes] = await Promise.all([fetch(usersURL), fetch(reposURL)]);
+    const [usersRes, reposRes] = await Promise.all([
+      fetch(usersURL, requestOptions),
+      fetch(reposURL, requestOptions),
+    ]);
 
     if (!usersRes.ok || !reposRes.ok) {
       throw new Error('Unable to fetch');
@@ -15,8 +26,8 @@ async function fetchUsersAndRepos(searchQuery: string) {
 
     // Alphabetize users and repos
     items.sort((itemA, itemB) => {
-      const nameA: string = itemA.name ? itemA.name.toUpperCase() : itemA.login.toUpperCase();
-      const nameB: string = itemB.name ? itemB.name.toUpperCase() : itemB.login.toUpperCase();
+      const nameA: string = itemA.full_name ? itemA.full_name.toUpperCase() : itemA.login.toUpperCase();
+      const nameB: string = itemB.full_name ? itemB.full_name.toUpperCase() : itemB.login.toUpperCase();
 
       if (nameA < nameB) {
         return -1;
