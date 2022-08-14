@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useState } from "react";
 
+import Input from './Input';
 import ResultItem from './ResultItem';
 
 import fetchUsersAndRepos from "./fetchUsersAndRepos";
@@ -10,53 +11,61 @@ interface Props {
 }
 
 const GithubSearch: React.FC<Props> = ({ token }) => {
-  const [inputVal, setInputVal] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[] | null>(null);
-  const [activeSuggestion, setActiveSuggestion] = useState<number | undefined>();
+  const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
 
   const timeoutId = useRef<NodeJS.Timeout>();
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setInputVal(e.target.value);
-  }
-
-  useEffect(() => {
-    clearTimeout(timeoutId.current);
-
-    if (inputVal.trim().length < 3) {
-      setSearchResults(null);
-      setIsFetching(false);
-      return;
-    }
-
-    // Provide feedback to the user as they type to improve user experience
+  function initiateSearch(query: string) {
+    // Fetching is indicated to user as they type
     // whether or not data is actually being fetched
+    // as a means to improve user experience
     setIsFetching(true);
+    clearTimeout(timeoutId.current);
 
     timeoutId.current = setTimeout(async () => {
       try {
-        const data = await fetchUsersAndRepos(inputVal, token);
-
-        if (data) {
-          setSearchResults(data);
-        }
+        const data = await fetchUsersAndRepos(query, token);
+        if (data) setSearchResults(data);
       } catch (err) {
         console.log(err);
       }
-
       setIsFetching(false);
     }, 500);
-  }, [inputVal]);
+  }
+
+  function clearSearch() {
+    clearTimeout(timeoutId.current);
+    setSearchResults(null);
+    setIsFetching(false);
+    setActiveSuggestion(0);
+  }
+
+  function navigateSuggestions(keyboardEventCode: string) {
+    switch (keyboardEventCode) {
+      case 'ArrowDown':
+        if (searchResults && searchResults.length - 1 > activeSuggestion) {
+          setActiveSuggestion(i => i + 1);
+        }
+        break;
+      case 'ArrowUp':
+        if (activeSuggestion > 0) {
+          setActiveSuggestion(i => i - 1);
+        }
+        break;
+      case 'Enter':
+        console.log('Following link...');
+        break;
+    }
+  }
 
   return (
     <div className="w-full max-w-full h-fit border border-grey-400 bg-white">
-      <input
-        type="search"
-        value={inputVal}
-        onChange={handleChange}
-        className="w-full h-10 focus:bg-slate-50 focus-visible:outline-0 block px-4 sm:text-sm rounded-t-md"
-        placeholder="Search GitHub..."
+      <Input
+        clearSearch={clearSearch}
+        initiateSearch={initiateSearch}
+        navigateSuggestions={navigateSuggestions}
       />
       {isFetching ? <p className="p-4 border-black bg-black text-white">Searching...</p> : null}
       {searchResults && searchResults.length === 0 ? <p className="p-4">0 results found</p> : null}
