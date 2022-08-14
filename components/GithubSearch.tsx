@@ -12,7 +12,7 @@ interface Props {
 const GithubSearch: React.FC<Props> = ({ token }) => {
   const [inputVal, setInputVal] = useState('');
   const [isFetching, setIsFetching] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<any[] | null>(null);
   const [activeSuggestion, setActiveSuggestion] = useState<number | undefined>();
 
   const timeoutId = useRef<NodeJS.Timeout>();
@@ -25,7 +25,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
     clearTimeout(timeoutId.current);
 
     if (inputVal.trim().length < 3) {
-      setSearchResults([]);
+      setSearchResults(null);
       setIsFetching(false);
       return;
     }
@@ -50,29 +50,30 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
   }, [inputVal]);
 
   return (
-    <div className="w-full h-fit border border-grey-400 bg-white">
+    <div className="w-full max-w-full h-fit border border-grey-400 bg-white">
       <input
         type="search"
         value={inputVal}
         onChange={handleChange}
-        className="w-full h-10 focus:bg-slate-50 focus-visible:outline-0 block px-5 sm:text-sm rounded-t-md"
+        className="w-full h-10 focus:bg-slate-50 focus-visible:outline-0 block px-4 sm:text-sm rounded-t-md"
         placeholder="Search GitHub..."
       />
-      <div>
-        {isFetching ? <p className="p-4 border-t bg-black text-white">Searching...</p> : null}
-      </div>
-      <ul>
-        {searchResults ? searchResults.map((item, index) => {
-          const content = item.login ? item.login : item.full_name;
-          return (
-            <ResultItem
-              key={index}
-              content={content}
-              isActive={activeSuggestion === index}
-            />
-          );
-        }) : null}
-      </ul>
+      {isFetching ? <p className="p-4 border-black bg-black text-white">Searching...</p> : null}
+      {searchResults && searchResults.length === 0 ? <p className="p-4">0 results found</p> : null}
+      {searchResults && searchResults.length > 0 ? (
+        <ul>
+          {searchResults.map((item, index) => {
+            const content = item.login ? item.login : item.full_name;
+            return (
+              <ResultItem
+                key={index}
+                content={content}
+                isActive={activeSuggestion === index}
+              />
+            );
+          })}
+        </ul>
+      ) : null}
     </div>
   );
 };
