@@ -59,7 +59,8 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
           }
           break;
         case 'Enter':
-          console.log('Following link...');
+          const suggestion = searchResults[activeSuggestion];
+          window.open(suggestion.html_url, '_blank');
           break;
       }
     }
@@ -77,11 +78,11 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
       {searchResults && searchResults.length > 0 ? (
         <ul>
           {searchResults.map((item, index) => {
-            const content = item.login ? item.login : item.full_name;
             return (
               <ResultItem
                 key={index}
-                content={content}
+                content={item.login || item.full_name}
+                url={item.html_url}
                 isActive={activeSuggestion === index}
               />
             );
