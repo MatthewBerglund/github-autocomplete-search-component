@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import Input from './Input';
 import Suggestion from './Suggestion';
+import Feedback from './Feedback';
 
 import fetchUsersAndRepos from "./fetchUsersAndRepos";
 
@@ -14,6 +15,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState<any[] | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [didErrorOccur, setDidErrorOccur] = useState(false);
 
   const timeoutId = useRef<NodeJS.Timeout>();
 
@@ -22,6 +24,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
     // whether or not data is actually being fetched
     // as a means to improve user experience
     setIsFetching(true);
+    setDidErrorOccur(false);
     clearTimeout(timeoutId.current);
 
     timeoutId.current = setTimeout(async () => {
@@ -32,7 +35,8 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
           setSelectedIndex(0);
         };
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        setDidErrorOccur(true);
       }
       setIsFetching(false);
     }, 500);
@@ -43,6 +47,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
     setSuggestions(null);
     setIsFetching(false);
     setSelectedIndex(0);
+    setDidErrorOccur(false);
   }
 
   function navigateSuggestions(keyboardEventCode: string) {
@@ -73,8 +78,13 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
         initiateSearch={initiateSearch}
         navigateSuggestions={navigateSuggestions}
       />
-      {isFetching ? <p className="p-4 border-black bg-black text-white">Searching...</p> : null}
-      {suggestions && suggestions.length === 0 ? <p className="p-4">0 results found</p> : null}
+      {isFetching ? (
+        <Feedback type="info" msg="Searching..." />
+      ) : didErrorOccur ? (
+        <Feedback type="error" msg="Unable to retrieve data. Please try again later." />
+      ) : suggestions && suggestions.length === 0 ? (
+        <Feedback type="info" msg="0 results found." />
+      ) : null}
       {suggestions && suggestions.length > 0 ? (
         <ul>
           {suggestions.map((item, index) => {

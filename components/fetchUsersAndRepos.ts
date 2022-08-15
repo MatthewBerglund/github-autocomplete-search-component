@@ -17,8 +17,12 @@ async function fetchUsersAndRepos(searchQuery: string, token?: string) {
       fetch(reposURL, requestOptions),
     ]);
 
-    if (!usersRes.ok || !reposRes.ok) {
-      throw new Error('Unable to fetch');
+    if (!usersRes.ok) {
+      throw new Error(`Status ${usersRes.status} ${usersRes.statusText}`);
+    }
+
+    if (!reposRes.ok) {
+      throw new Error(`Status ${reposRes.status} ${reposRes.statusText}`);
     }
 
     const [users, repos] = await Promise.all([usersRes.json(), reposRes.json()]);
@@ -41,7 +45,7 @@ async function fetchUsersAndRepos(searchQuery: string, token?: string) {
     const truncatedItems = items.slice(0, 50);
     return Promise.resolve(truncatedItems);
   } catch (err) {
-    console.error(err);
+    return Promise.reject('Unable to fetch data from GitHub. ' + err);
   }
 }
 
