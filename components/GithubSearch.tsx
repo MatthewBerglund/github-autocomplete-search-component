@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useState } from "react";
 
 import Input from './Input';
-import ResultItem from './ResultItem';
+import Suggestion from './Suggestion';
 
 import fetchUsersAndRepos from "./fetchUsersAndRepos";
 
@@ -12,8 +12,8 @@ interface Props {
 
 const GithubSearch: React.FC<Props> = ({ token }) => {
   const [isFetching, setIsFetching] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[] | null>(null);
-  const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
+  const [suggestions, setSuggestions] = useState<any[] | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const timeoutId = useRef<NodeJS.Timeout>();
 
@@ -28,8 +28,8 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
       try {
         const data = await fetchUsersAndRepos(query, token);
         if (data) {
-          setSearchResults(data);
-          setActiveSuggestion(0);
+          setSuggestions(data);
+          setSelectedIndex(0);
         };
       } catch (err) {
         console.log(err);
@@ -40,27 +40,27 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
 
   function clearSearch() {
     clearTimeout(timeoutId.current);
-    setSearchResults(null);
+    setSuggestions(null);
     setIsFetching(false);
-    setActiveSuggestion(0);
+    setSelectedIndex(0);
   }
 
   function navigateSuggestions(keyboardEventCode: string) {
-    if (searchResults) {
+    if (suggestions) {
       switch (keyboardEventCode) {
         case 'ArrowDown':
-          if (searchResults.length - 1 > activeSuggestion) {
-            setActiveSuggestion(i => i + 1);
+          if (suggestions.length - 1 > selectedIndex) {
+            setSelectedIndex(i => i + 1);
           }
           break;
         case 'ArrowUp':
-          if (activeSuggestion > 0) {
-            setActiveSuggestion(i => i - 1);
+          if (selectedIndex > 0) {
+            setSelectedIndex(i => i - 1);
           }
           break;
         case 'Enter':
-          const suggestion = searchResults[activeSuggestion];
-          window.open(suggestion.html_url, '_blank');
+          const selectedSuggestion = suggestions[selectedIndex];
+          window.open(selectedSuggestion.html_url, '_blank');
           break;
       }
     }
@@ -74,16 +74,16 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
         navigateSuggestions={navigateSuggestions}
       />
       {isFetching ? <p className="p-4 border-black bg-black text-white">Searching...</p> : null}
-      {searchResults && searchResults.length === 0 ? <p className="p-4">0 results found</p> : null}
-      {searchResults && searchResults.length > 0 ? (
+      {suggestions && suggestions.length === 0 ? <p className="p-4">0 results found</p> : null}
+      {suggestions && suggestions.length > 0 ? (
         <ul>
-          {searchResults.map((item, index) => {
+          {suggestions.map((item, index) => {
             return (
-              <ResultItem
+              <Suggestion
                 key={index}
                 content={item.login || item.full_name}
                 url={item.html_url}
-                isActive={activeSuggestion === index}
+                isSelected={selectedIndex === index}
               />
             );
           })}
