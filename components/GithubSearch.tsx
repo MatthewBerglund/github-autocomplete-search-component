@@ -27,7 +27,10 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
     timeoutId.current = setTimeout(async () => {
       try {
         const data = await fetchUsersAndRepos(query, token);
-        if (data) setSearchResults(data);
+        if (data) {
+          setSearchResults(data);
+          setActiveSuggestion(0);
+        };
       } catch (err) {
         console.log(err);
       }
@@ -43,20 +46,22 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
   }
 
   function navigateSuggestions(keyboardEventCode: string) {
-    switch (keyboardEventCode) {
-      case 'ArrowDown':
-        if (searchResults && searchResults.length - 1 > activeSuggestion) {
-          setActiveSuggestion(i => i + 1);
-        }
-        break;
-      case 'ArrowUp':
-        if (activeSuggestion > 0) {
-          setActiveSuggestion(i => i - 1);
-        }
-        break;
-      case 'Enter':
-        console.log('Following link...');
-        break;
+    if (searchResults) {
+      switch (keyboardEventCode) {
+        case 'ArrowDown':
+          if (searchResults.length - 1 > activeSuggestion) {
+            setActiveSuggestion(i => i + 1);
+          }
+          break;
+        case 'ArrowUp':
+          if (activeSuggestion > 0) {
+            setActiveSuggestion(i => i - 1);
+          }
+          break;
+        case 'Enter':
+          console.log('Following link...');
+          break;
+      }
     }
   }
 
