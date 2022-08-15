@@ -26,8 +26,8 @@ async function fetchUsersAndRepos(searchQuery: string, token?: string) {
 
     // Alphabetize users and repos
     items.sort((itemA, itemB) => {
-      const nameA: string = itemA.full_name ? itemA.full_name.toUpperCase() : itemA.login.toUpperCase();
-      const nameB: string = itemB.full_name ? itemB.full_name.toUpperCase() : itemB.login.toUpperCase();
+      const nameA: string = itemA.login ? itemA.login.toUpperCase() : itemA.full_name.toUpperCase();
+      const nameB: string = itemB.login ? itemB.login.toUpperCase() : itemB.full_name.toUpperCase();
 
       if (nameA < nameB) {
         return -1;
