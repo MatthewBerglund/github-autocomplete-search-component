@@ -8,9 +8,11 @@ import fetchUsersAndRepos from "./fetchUsersAndRepos";
 
 interface Props {
   token?: string,
+  suggestionsLength?: number,
+  displayFullResultsCallback: (suggestions: any[]) => void,
 }
 
-const GithubSearch: React.FC<Props> = ({ token }) => {
+const GithubSearch: React.FC<Props> = ({ token, suggestionsLength = 5, displayFullResultsCallback }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState<any[] | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -53,7 +55,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
     if (suggestions) {
       switch (keyboardEventCode) {
         case 'ArrowDown':
-          if (suggestions.length - 1 > selectedIndex) {
+          if (suggestions.length > selectedIndex) {
             setSelectedIndex(i => i + 1);
           }
           break;
@@ -63,15 +65,20 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
           }
           break;
         case 'Enter':
-          const selectedSuggestion = suggestions[selectedIndex];
-          window.open(selectedSuggestion.html_url, '_blank');
-          break;
+          if (selectedIndex === suggestionsLength) {
+            displayFullResultsCallback(suggestions);
+            clearSearch();
+          } else {
+            const selectedSuggestion = suggestions[selectedIndex];
+            window.open(selectedSuggestion.html_url, '_blank');
+            break;
+          }
       }
     }
   };
 
   return (
-    <div className="w-full max-w-full h-fit border border-grey-400 bg-white">
+    <div className="w-full max-w-full h-fit border border-grey-400 bg-white relative z-10">
       <Input
         clearSearch={clearSearch}
         initiateSearch={initiateSearch}
@@ -85,20 +92,36 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
         <Feedback type="info" msg="0 results found." />
       ) : null}
       {suggestions && suggestions.length > 0 ? (
-        <ul>
+        <ul className="max-h-fit">
           {suggestions.map((item, index) => {
-            return (
-              <Suggestion
-                key={index}
-                index={index}
-                type={item.login ? 'user' : 'repo'}
-                content={item.login || item.full_name}
-                url={item.html_url}
-                isSelected={selectedIndex === index}
-                setSelectedIndex={setSelectedIndex}
-              />
-            );
+            if (index < suggestionsLength) {
+              return (
+                <Suggestion
+                  key={index}
+                  index={index}
+                  type={item.login ? 'user' : 'repo'}
+                  content={item.login || item.full_name}
+                  url={item.html_url}
+                  isSelected={selectedIndex === index}
+                  setSelectedIndex={setSelectedIndex}
+                />
+              );
+            }
           })}
+          {suggestions.length > suggestionsLength ? (
+            <li>
+              <button
+                className={`${selectedIndex === suggestionsLength ? 'bg-blue-100' : ''} w-full p-4 border-t`}
+                onClick={() => {
+                  displayFullResultsCallback(suggestions);
+                  clearSearch();
+                }}
+                onMouseOver={() => setSelectedIndex(suggestionsLength)}
+              >
+                Show more suggestions
+              </button>
+            </li>
+          ) : null}
         </ul>
       ) : null}
     </div>
