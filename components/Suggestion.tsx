@@ -10,7 +10,7 @@ interface Props {
 
 const Suggestion: React.FC<Props> = ({ index, content, url, isSelected, setSelectedIndex }) => {
   return (
-    <li className="h-14 border-t">
+    <li className="min-h-14 border-t">
       <a
         href={url}
         target="_blank"
@@ -18,7 +18,7 @@ const Suggestion: React.FC<Props> = ({ index, content, url, isSelected, setSelec
         className="github-suggestion-anchor flex align-middle"
         onMouseOver={() => setSelectedIndex(index)}
       >
-        <span className={`${isSelected ? 'bg-blue-600 text-white' : ''} p-4 w-full`}>{content}</span>
+        <span className={`${isSelected ? 'bg-blue-600 text-white' : ''} p-4 w-full break-words`}>{content}</span>
       </a>
     </li>
   );;
