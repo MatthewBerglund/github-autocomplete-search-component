@@ -7,7 +7,7 @@ interface Props {
 
 const Feedback: React.FC<Props> = ({ type, msg }) => {
   return (
-    <p className={`${type === 'error' ? 'text-red-600' : 'text-white'} p-4 border-black bg-black`}>
+    <p className={`${type === 'error' ? 'bg-red-600 border-red-600' : 'bg-black border-black'} text-white p-4`}>
       {msg}
     </p>
   );

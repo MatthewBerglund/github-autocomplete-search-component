@@ -50,7 +50,7 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
       onFocus={() => {
         if (inputVal.length >= 3) initiateSearch(inputVal);
       }}
-      onBlur={handleBlur}
+      // onBlur={handleBlur}
       onKeyDown={handleKeydown}
       className="w-full h-10 focus:bg-slate-50 focus-visible:outline-none block px-4 sm:text-sm"
       placeholder="Search GitHub..."

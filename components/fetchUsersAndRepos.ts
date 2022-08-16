@@ -1,5 +1,5 @@
 async function fetchUsersAndRepos(searchQuery: string, token?: string) {
-  const baseURL = 'https://api.github.com/search/';
+  const baseURL = 'https://api.github.com/searc/';
   const usersURL = baseURL + `users?q=${encodeURIComponent(`${searchQuery} in:login`)}&per_page=50`;
   const reposURL = baseURL + `repositories?q=${encodeURIComponent(`${searchQuery} in:name`)}&per_page=50`;
 
