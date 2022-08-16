@@ -52,7 +52,7 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
       }}
       onBlur={handleBlur}
       onKeyDown={handleKeydown}
-      className="w-full h-10 focus:bg-slate-50 focus-visible:outline-0 block px-4 sm:text-sm rounded-t-md"
+      className="w-full h-10 focus:bg-slate-50 focus-visible:outline-none block px-4 sm:text-sm"
       placeholder="Search GitHub..."
     />
   );
