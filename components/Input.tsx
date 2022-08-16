@@ -18,7 +18,7 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
     }
 
     initiateSearch(inputVal);
-  }, [inputVal]);
+  }, [inputVal, initiateSearch, clearSearch]);
 
   function handleKeydown(e: React.KeyboardEvent) {
     if (e.code === 'Escape') {
@@ -38,7 +38,6 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
       const relatedTarget = e.relatedTarget as HTMLAnchorElement;
       window.open(relatedTarget.href, '_blank');
     }
-
     clearSearch();
   }
 

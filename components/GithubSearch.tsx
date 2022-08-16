@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import { useState } from "react";
+import React, { useCallback, useRef, useState } from 'react';
 
 import Input from './Input';
 import Suggestion from './Suggestion';
@@ -19,7 +18,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
 
   const timeoutId = useRef<NodeJS.Timeout>();
 
-  function initiateSearch(query: string) {
+  const initiateSearch = useCallback((query: string) => {
     // Fetching is indicated to user as they type
     // whether or not data is actually being fetched
     // as a means to improve user experience
@@ -40,17 +39,17 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
       }
       setIsFetching(false);
     }, 500);
-  }
+  }, []);
 
-  function clearSearch() {
+  const clearSearch = useCallback(() => {
     clearTimeout(timeoutId.current);
     setSuggestions(null);
     setIsFetching(false);
     setSelectedIndex(0);
     setDidErrorOccur(false);
-  }
+  }, []);
 
-  function navigateSuggestions(keyboardEventCode: string) {
+  const navigateSuggestions = (keyboardEventCode: string) => {
     if (suggestions) {
       switch (keyboardEventCode) {
         case 'ArrowDown':
@@ -69,7 +68,7 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
           break;
       }
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-full h-fit border border-grey-400 bg-white">

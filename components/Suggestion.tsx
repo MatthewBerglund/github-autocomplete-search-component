@@ -14,6 +14,7 @@ const Suggestion: React.FC<Props> = ({ index, content, url, isSelected, setSelec
       <a
         href={url}
         target="_blank"
+        rel="noreferrer"
         className="github-suggestion-anchor flex align-middle"
         onMouseOver={() => setSelectedIndex(index)}
       >
