@@ -33,6 +33,15 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
     }
   }
 
+  function handleBlur(e: React.FocusEvent) {
+    if (e.relatedTarget?.classList.contains('github-suggestion-anchor')) {
+      const relatedTarget = e.relatedTarget as HTMLAnchorElement;
+      window.open(relatedTarget.href, '_blank');
+    }
+
+    clearSearch();
+  }
+
   return (
     <input
       ref={inputRef}
@@ -42,14 +51,7 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
       onFocus={() => {
         if (inputVal.length >= 3) initiateSearch(inputVal);
       }}
-      onBlur={(e) => {
-        if (e.relatedTarget?.classList.contains('github-suggestion-anchor')) {
-          const relatedTarget = e.relatedTarget as HTMLAnchorElement;
-          window.open(relatedTarget.href, '_blank');
-        }
-
-        clearSearch();
-      }}
+      onBlur={handleBlur}
       onKeyDown={handleKeydown}
       className="w-full h-10 focus:bg-slate-50 focus-visible:outline-0 block px-4 sm:text-sm rounded-t-md"
       placeholder="Search GitHub..."

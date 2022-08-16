@@ -91,9 +91,11 @@ const GithubSearch: React.FC<Props> = ({ token }) => {
             return (
               <Suggestion
                 key={index}
+                index={index}
                 content={item.login || item.full_name}
                 url={item.html_url}
                 isSelected={selectedIndex === index}
+                setSelectedIndex={setSelectedIndex}
               />
             );
           })}
