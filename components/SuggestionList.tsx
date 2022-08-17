@@ -8,7 +8,7 @@ interface Props {
   numSuggestionsToDisplay: number,
   selectedIndex: number,
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>,
-  displayAllSuggestions: () => void
+  displayAllSuggestions: () => void,
   clearSearch: () => void,
 }
 

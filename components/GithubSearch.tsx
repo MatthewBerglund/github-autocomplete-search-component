@@ -9,10 +9,10 @@ import fetchUsersAndRepos from "./fetchUsersAndRepos";
 interface Props {
   token?: string,
   numSuggestionsToDisplay?: number,
-  displayFullResultsCallback: (suggestions: any[]) => void,
+  fullSuggestionsCallback: (suggestions: any[]) => void,
 }
 
-const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, displayFullResultsCallback }) => {
+const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, fullSuggestionsCallback }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState<any[] | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -21,12 +21,12 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, dis
   const timeoutId = useRef<NodeJS.Timeout>();
 
   const displayAllSuggestions = () => {
-    if (suggestions) displayFullResultsCallback(suggestions);
+    if (suggestions) fullSuggestionsCallback(suggestions);
   };
 
   const initiateSearch = useCallback((query: string) => {
-    // Fetching is indicated to user as they type
-    // whether or not data is actually being fetched
+    // Fetching is indicated to user as they type,
+    // whether or not data is actually being fetched,
     // as a means to improve user experience
     setIsFetching(true);
     setDidErrorOccur(false);
@@ -70,7 +70,7 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, dis
           break;
         case 'Enter':
           if (selectedIndex === numSuggestionsToDisplay) {
-            displayFullResultsCallback(suggestions);
+            displayAllSuggestions();
             clearSearch();
           } else {
             const selectedSuggestion = suggestions[selectedIndex];

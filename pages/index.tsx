@@ -6,8 +6,8 @@ import GithubSearch from '../components/GithubSearch'
 const Home: NextPage = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
 
-  function myCallback(suggestions: any[]) {
-    console.log('myCallback ran');
+  // Example callback for handling the full list of suggestions
+  function displayAllSuggestions(suggestions: any[]) {
     setSuggestions(suggestions);
   }
 
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
           <GithubSearch
             token={process.env.NEXT_PUBLIC_GITHUB_PAT}
             numSuggestionsToDisplay={10}
-            displayFullResultsCallback={myCallback}
+            fullSuggestionsCallback={displayAllSuggestions}
           />
         </div>
       </div>
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
                 href={suggestion.html_url}
                 target="_blank"
                 rel="noreferrer"
-                className={`github-suggestion-anchor grid grid-cols-1 items-center justify-items-center bg-slate-100`}
+                className={`grid grid-cols-1 items-center justify-items-center bg-slate-100`}
               >
                 <span className="p-4 w-full break-words">{suggestion.login || suggestion.full_name}</span>
               </a>
