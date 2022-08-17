@@ -21,14 +21,14 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
   }, [inputVal, initiateSearch, clearSearch]);
 
   function handleKeydown(e: React.KeyboardEvent) {
-    if (e.code === 'Escape') {
+    if (e.key === 'Escape') {
       if (inputRef.current !== null) inputRef.current.blur();
       clearSearch();
       return;
     }
 
-    if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
-      navigateSuggestions(e.code);
+    if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.key)) {
+      navigateSuggestions(e.key);
       return;
     }
   }

@@ -55,9 +55,9 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, ful
     setDidErrorOccur(false);
   }, []);
 
-  const navigateSuggestions = (keyboardEventCode: string) => {
+  const navigateSuggestions = (keyboardEventKey: string) => {
     if (suggestions) {
-      switch (keyboardEventCode) {
+      switch (keyboardEventKey) {
         case 'ArrowDown':
           if (suggestions.length > selectedIndex) {
             setSelectedIndex(i => i + 1);
