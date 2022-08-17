@@ -47,4 +47,4 @@ There are a number of known issues with Safari which need to be addressed in the
 - Safari's default autocomplete feature in input elements disrupts the user's ability to browse results with the keyboard.
 
 # License
-Distributed under the MIT License. See [LICENSE](https://github.com/MatthewBerglund/github-autocomplete-search-component/LICENSE.txt) for more information.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
