@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import Input from './Input';
-import Suggestion from './Suggestion';
 import Feedback from './Feedback';
+import SuggestionList from './SuggestionList';
 
 import fetchUsersAndRepos from "./fetchUsersAndRepos";
 
@@ -19,6 +19,10 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, dis
   const [didErrorOccur, setDidErrorOccur] = useState(false);
 
   const timeoutId = useRef<NodeJS.Timeout>();
+
+  const displayAllSuggestions = () => {
+    if (suggestions) displayFullResultsCallback(suggestions);
+  };
 
   const initiateSearch = useCallback((query: string) => {
     // Fetching is indicated to user as they type
@@ -92,39 +96,14 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, dis
         <Feedback type="info" msg="0 results found." />
       ) : null}
       {suggestions && suggestions.length > 0 ? (
-        <ul className="max-h-fit">
-          {suggestions.map((item, index) => {
-            if (index < numSuggestionsToDisplay) {
-              return (
-                <Suggestion
-                  key={index}
-                  index={index}
-                  type={item.login ? 'user' : 'repo'}
-                  content={item.login || item.full_name}
-                  url={item.html_url}
-                  isSelected={selectedIndex === index}
-                  setSelectedIndex={setSelectedIndex}
-                />
-              );
-            }
-          })}
-          {suggestions.length > numSuggestionsToDisplay ? (
-            <li>
-              <button
-                type="button"
-                id="display-all-button"
-                className={`${selectedIndex === numSuggestionsToDisplay ? 'bg-blue-100' : ''} w-full p-4 border-t text-blue-600`}
-                onClick={() => {
-                  displayFullResultsCallback(suggestions);
-                  clearSearch();
-                }}
-                onMouseOver={() => setSelectedIndex(numSuggestionsToDisplay)}
-              >
-                Show more suggestions
-              </button>
-            </li>
-          ) : null}
-        </ul>
+        <SuggestionList
+          suggestions={suggestions}
+          numSuggestionsToDisplay={numSuggestionsToDisplay}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+          displayAllSuggestions={displayAllSuggestions}
+          clearSearch={clearSearch}
+        />
       ) : null}
     </div>
   );
