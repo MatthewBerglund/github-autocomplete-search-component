@@ -8,11 +8,11 @@ import fetchUsersAndRepos from "./fetchUsersAndRepos";
 
 interface Props {
   token?: string,
-  suggestionsLength?: number,
+  numSuggestionsToDisplay?: number,
   displayFullResultsCallback: (suggestions: any[]) => void,
 }
 
-const GithubSearch: React.FC<Props> = ({ token, suggestionsLength = 5, displayFullResultsCallback }) => {
+const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, displayFullResultsCallback }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState<any[] | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -65,7 +65,7 @@ const GithubSearch: React.FC<Props> = ({ token, suggestionsLength = 5, displayFu
           }
           break;
         case 'Enter':
-          if (selectedIndex === suggestionsLength) {
+          if (selectedIndex === numSuggestionsToDisplay) {
             displayFullResultsCallback(suggestions);
             clearSearch();
           } else {
@@ -94,7 +94,7 @@ const GithubSearch: React.FC<Props> = ({ token, suggestionsLength = 5, displayFu
       {suggestions && suggestions.length > 0 ? (
         <ul className="max-h-fit">
           {suggestions.map((item, index) => {
-            if (index < suggestionsLength) {
+            if (index < numSuggestionsToDisplay) {
               return (
                 <Suggestion
                   key={index}
@@ -108,15 +108,17 @@ const GithubSearch: React.FC<Props> = ({ token, suggestionsLength = 5, displayFu
               );
             }
           })}
-          {suggestions.length > suggestionsLength ? (
+          {suggestions.length > numSuggestionsToDisplay ? (
             <li>
               <button
-                className={`${selectedIndex === suggestionsLength ? 'bg-blue-100' : ''} w-full p-4 border-t`}
+                type="button"
+                id="display-all-button"
+                className={`${selectedIndex === numSuggestionsToDisplay ? 'bg-blue-100' : ''} w-full p-4 border-t text-blue-600`}
                 onClick={() => {
                   displayFullResultsCallback(suggestions);
                   clearSearch();
                 }}
-                onMouseOver={() => setSelectedIndex(suggestionsLength)}
+                onMouseOver={() => setSelectedIndex(numSuggestionsToDisplay)}
               >
                 Show more suggestions
               </button>

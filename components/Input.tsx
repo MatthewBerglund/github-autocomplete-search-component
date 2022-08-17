@@ -34,10 +34,15 @@ const Input: React.FC<Props> = ({ clearSearch, initiateSearch, navigateSuggestio
   }
 
   function handleBlur(e: React.FocusEvent) {
+    let relatedTarget;
     if (e.relatedTarget?.classList.contains('github-suggestion-anchor')) {
-      const relatedTarget = e.relatedTarget as HTMLAnchorElement;
+      relatedTarget = e.relatedTarget as HTMLAnchorElement;
       window.open(relatedTarget.href, '_blank');
+    } else if (e.relatedTarget?.id === 'display-all-button') {
+      relatedTarget = e.relatedTarget as HTMLButtonElement;
+      relatedTarget.click();
     }
+
     clearSearch();
   }
 

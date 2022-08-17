@@ -27,7 +27,6 @@ const Suggestion: React.FC<Props> = ({ index, type, content, url, isSelected, se
         ) : (
           <FolderOpenIcon className={`${isSelected ? 'text-white' : 'text-gray-400'} h-5 w-5`} />
         )}
-
       </a>
     </li>
   );;
