@@ -9,10 +9,10 @@ import fetchUsersAndRepos from "./fetchUsersAndRepos";
 interface Props {
   token?: string,
   numSuggestionsToDisplay?: number,
-  fullSuggestionsCallback: (suggestions: any[]) => void,
+  onShowAllClick: (suggestions: any[]) => void,
 }
 
-const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, fullSuggestionsCallback }) => {
+const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, onShowAllClick }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState<any[] | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -21,7 +21,7 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, ful
   const timeoutId = useRef<NodeJS.Timeout>();
 
   const displayAllSuggestions = () => {
-    if (suggestions) fullSuggestionsCallback(suggestions);
+    if (suggestions) onShowAllClick(suggestions);
   };
 
   const initiateSearch = useCallback((query: string) => {

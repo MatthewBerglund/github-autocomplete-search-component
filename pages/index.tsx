@@ -13,11 +13,11 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="flex justify-center align-top py-6 bg-green-400 my-0 mx-auto">
+      <div className="flex justify-center align-top py-6 my-0 mx-auto">
         <div className="w-96 h-12">
           <GithubSearch
             token={process.env.NEXT_PUBLIC_GITHUB_PAT}
-            numSuggestionsToDisplay={10}
+            numSuggestionsToDisplay={5}
             fullSuggestionsCallback={displayAllSuggestions}
           />
         </div>
