@@ -1,10 +1,10 @@
 # GitHub Users and Repos Search Component
 
-A reusable autocomplete search component that searches GitHub for user profiles and repositories. You can [view an example here](https://62fcb25e1b499a006991a71c--reliable-smakager-6316f8.netlify.app/).
+A reusable autocomplete search component for react that searches GitHub for user profiles and repositories. You can [view an example here](https://62fcb25e1b499a006991a71c--reliable-smakager-6316f8.netlify.app/).
 
 ![GitHub search component](/assets/github_search_screenshot.png)
 
-Developed with **TypeScript** | **Tailwind CSS** | **Next.js**
+Developed with **React.js** | **TypeScript** | **Tailwind CSS**
 
 # Configuration
 The most basic version of the search component takes a callback function for handling the display of the full search results. 
