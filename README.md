@@ -45,3 +45,6 @@ The search component is compatible with the latest versions of Chrome and Firefo
 There are a number of known issues with Safari which need to be addressed in the future:
 - Clicking individual suggestions or the "Show all suggestions" button does not work properly, as focus event behavior on Safari does not support the component's current implementation.
 - Safari's default autocomplete feature in input elements disrupts the user's ability to browse results with the keyboard.
+
+# License
+Distributed under the MIT License. See [LICENSE](https://github.com/MatthewBerglund/github-autocomplete-search-component/LICENSE.txt) for more information.
