@@ -45,7 +45,7 @@ const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, onS
       }
       setIsFetching(false);
     }, 500);
-  }, []);
+  }, [token]);
 
   const clearSearch = useCallback(() => {
     clearTimeout(timeoutId.current);

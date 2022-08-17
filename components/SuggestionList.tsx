@@ -47,11 +47,11 @@ const SuggestionList: React.FC<Props> = ({
   };
 
   return (
-    <ul className="max-h-fit">
+    <ul className="max-h-fit" data-testid="suggestion-list">
       {suggestions.map((item, index) => {
         if (index < numSuggestionsToDisplay) {
           return (
-            <li key={index} className="min-h-14 border-t">
+            <li key={index} className="min-h-14 border-t" data-testid="suggestion-li">
               <Suggestion
                 index={index}
                 type={item.login ? 'user' : 'repo'}
