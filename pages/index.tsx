@@ -17,8 +17,8 @@ const Home: NextPage = () => {
         <div className="w-96 h-12">
           <GithubSearch
             token={process.env.NEXT_PUBLIC_GITHUB_PAT}
-            numSuggestionsToDisplay={5}
-            fullSuggestionsCallback={displayAllSuggestions}
+            numSuggestionsToDisplay={10}
+            onShowAllClick={displayAllSuggestions}
           />
         </div>
       </div>
