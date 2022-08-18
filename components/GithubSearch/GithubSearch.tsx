@@ -4,7 +4,7 @@ import Input from './Input';
 import Feedback from './Feedback';
 import SuggestionList from './SuggestionList';
 
-import fetchUsersAndRepos from "./fetchUsersAndRepos";
+import fetchUsersAndRepos from "./scripts/fetchUsersAndRepos";
 
 interface Props {
   token?: string,
