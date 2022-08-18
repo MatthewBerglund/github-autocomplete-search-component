@@ -1,61 +1,111 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom';
+import "whatwg-fetch";
+
 import GithubSearch from './GithubSearch';
-import fetchUsersAndRepos from './fetchUsersAndRepos';
 
-const mockedUserAndRepos = [
-  { login: 'a', html_url: 'https://www.github.com' },
-  { login: 'b', html_url: 'https://www.github.com' },
-  { login: 'c', html_url: 'https://www.github.com' },
-  { full_name: 'd/repo', html_url: 'https://www.github.com' },
-  { full_name: 'e/repo', html_url: 'https://www.github.com' },
-  { full_name: 'f/repo', html_url: 'https://www.github.com' },
-];
+const server = setupServer(
+  rest.get('https://api.github.com/search/users', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        items: [
+          { login: 'userA' },
+          { login: 'userB' },
+          { login: 'userC' },
+        ]
+      }),
+    )
+  }),
+  rest.get('https://api.github.com/search/repositories', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        items: [
+          { full_name: 'userD/repoA' },
+          { full_name: 'userE/repoB' },
+          { full_name: 'userF/repoC' },
+        ]
+      }),
+    )
+  }),
+)
 
-jest.mock('./fetchUsersAndRepos', () => {
-  return {
-    __esModule: true,
-    default: jest.fn(() => Promise.resolve(mockedUserAndRepos)),
-  }
+beforeEach(() => {
+  server.listen();
 });
 
-test('it should not call fetchUsersAndRepos unless search query is at least 3 characters in length', async () => {
-  const user = userEvent.setup({ delay: 0.5 });
-
-  render(<GithubSearch onShowAllClick={() => { }} />);
-
-  const input = screen.getByRole('searchbox');
-
-  await user.type(input, 'be');
-  await waitFor(() => expect(fetchUsersAndRepos).toBeCalledTimes(0));
-
-  await user.type(input, 'ber');
-  await waitFor(() => expect(fetchUsersAndRepos).toBeCalledTimes(1));
+afterEach(() => {
+  server.close();
+  server.resetHandlers();
+  cleanup();
 });
 
-test('it should provide visual feedback when data is being fetched', async () => {
-  const user = userEvent.setup({ delay: 0.5 });
-
-  render(<GithubSearch onShowAllClick={() => { }} />);
+test('it should not submit a search unless search query is at least 3 chars long', async () => {
+  render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
+  await userEvent.type(input, 'be', { delay: 0.5 });
 
-  await user.type(input, 'berg');
+  expect(screen.queryByText(/searching\.\.\./i)).toBeNull();
+});
+
+test('it should provide visual feedback when fetching data', async () => {
+  render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
+
+  const input = screen.getByRole('searchbox');
+  await userEvent.type(input, 'berg', { delay: 0.5 });
+
   expect(screen.getByText(/searching\.\.\./i)).toBeVisible();
 });
 
-test('it should display the correct number of suggestions', async () => {
-  const user = userEvent.setup({ delay: 0.5 });
+test('it should provide visual feedback when results are empty', async () => {
+  server.use(
+    rest.get('https://api.github.com/search/users', (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json({ items: [] }));
+    }),
+    rest.get('https://api.github.com/search/repositories', (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json({ items: [] }));
+    }));
 
-  render(<GithubSearch onShowAllClick={() => { }} />);
+  render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
+
+  const input = screen.getByRole('searchbox');
+  await userEvent.type(input, 'berg', { delay: 0.5 });
+
+  await waitFor(() => expect(screen.getByText(/0 results found\./i)).toBeVisible());
+});
+
+test('it should provide visual feedback if an error occurs', async () => {
+  server.use(
+    rest.get('https://api.github.com/search/users', (req, res, ctx) => {
+      return res(ctx.status(403));
+    }),
+    rest.get('https://api.github.com/search/repositories', (req, res, ctx) => {
+      return res(ctx.status(403));
+    }));
+
+  render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
 
+  try {
+    await userEvent.type(input, 'berg', { delay: 0.5 });
+  } catch (err) {
+    expect(screen.getByText(/unable to retrieve data\. please try again later\./i)).toBeVisible();
+  }
+});
 
-  await user.type(input, 'berg');
-  await waitFor(() => {
-    const suggestionItems = screen.getAllByTestId('suggestion-li');
-    expect(suggestionItems.length).toBe(5);
-  });
+test('it should display the correct number of suggestions', async () => {
+  render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
+
+  const input = screen.getByRole('searchbox');
+  await userEvent.type(input, 'berg', { delay: 0.5 });
+  await waitFor(() => expect(screen.getAllByTestId('suggestion-li').length).toBe(5));
+
+  server.close();
+  server.resetHandlers();
 });
