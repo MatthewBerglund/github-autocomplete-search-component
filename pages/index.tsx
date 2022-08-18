@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { useState } from 'react';
 
-import GithubSearch from '../components/GithubSearch'
+import GithubSearch from '../GithubSearch/GithubSearch'
 
 const Home: NextPage = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
