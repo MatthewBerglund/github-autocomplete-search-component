@@ -1,6 +1,6 @@
 # GitHub Users and Repos Search Component
 
-A reusable autocomplete search component for react that searches GitHub for user profiles and repositories. You can [view an example here](https://62fe32506a244b28e085e387--reliable-smakager-6316f8.netlify.app/).
+A reusable autocomplete search component for react that searches GitHub for user profiles and repositories. You can [view an example here](https://6300671e5f387908dc891d9e--reliable-smakager-6316f8.netlify.app/).
 
 ![GitHub search component](/assets/github_search_screenshot.png)
 
