@@ -2,9 +2,10 @@ import React from 'react';
 
 import Suggestion from './Suggestion';
 import DisplayAllButton from './DisplayAllButton';
+import { UserData, RepoData } from './scripts/fetchUsersAndRepos';
 
 interface Props {
-  suggestions: any[],
+  suggestions: (UserData | RepoData)[],
   numSuggestionsToDisplay: number,
   selectedIndex: number,
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>,
@@ -28,8 +29,8 @@ const SuggestionList: React.FC<Props> = ({
             <li key={index} className="min-h-14 border-t" data-testid="suggestion-li">
               <Suggestion
                 index={index}
-                type={item.login ? 'user' : 'repo'}
-                content={item.login || item.full_name}
+                type={'login' in item ? 'user' : 'repo'}
+                content={'login' in item ? item.login : item.full_name}
                 url={item.html_url}
                 isSelected={selectedIndex === index}
                 setSelectedIndex={setSelectedIndex}

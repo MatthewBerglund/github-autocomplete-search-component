@@ -3,18 +3,18 @@ import React, { useCallback, useRef, useState } from 'react';
 import Input from './Input';
 import Feedback from './Feedback';
 import SuggestionList from './SuggestionList';
-import fetchUsersAndRepos from './scripts/fetchUsersAndRepos';
+import { fetchUsersAndRepos, UserData, RepoData } from './scripts/fetchUsersAndRepos';
 
 interface Props {
   token?: string,
   numSuggestionsToDisplay?: number,
-  onShowAllClick: (suggestions: any[]) => void,
+  onShowAllClick: (suggestions: (UserData | RepoData)[]) => void,
 }
 
 const GithubSearch: React.FC<Props> = ({ token, numSuggestionsToDisplay = 5, onShowAllClick }) => {
   const [isFetching, setIsFetching] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[] | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [suggestions, setSuggestions] = useState<(UserData | RepoData)[] | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [didErrorOccur, setDidErrorOccur] = useState(false);
 
   const timeoutId = useRef<NodeJS.Timeout>();

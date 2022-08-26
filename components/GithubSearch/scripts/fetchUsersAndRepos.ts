@@ -1,4 +1,18 @@
-async function fetchUsersAndRepos(searchQuery: string, token?: string) {
+export type UserData = {
+  login: string,
+  html_url: string,
+};
+
+export type RepoData = {
+  full_name: string,
+  html_url: string,
+};
+
+type JSONResponse = {
+  items: UserData[] | RepoData[],
+};
+
+export async function fetchUsersAndRepos(searchQuery: string, token?: string): Promise<(UserData | RepoData)[]> {
   const baseURL = 'https://api.github.com/search/';
   const usersURL = baseURL + `users?q=${encodeURIComponent(`${searchQuery} in:login`)}&per_page=50`;
   const reposURL = baseURL + `repositories?q=${encodeURIComponent(`${searchQuery} in:name`)}&per_page=50`;
@@ -12,26 +26,26 @@ async function fetchUsersAndRepos(searchQuery: string, token?: string) {
   }
 
   try {
-    const [usersRes, reposRes] = await Promise.all([
+    const [userResponse, repoResponse] = await Promise.all([
       fetch(usersURL, requestOptions),
       fetch(reposURL, requestOptions),
     ]);
 
-    if (!usersRes.ok) {
-      throw new Error(`Status ${usersRes.status} ${usersRes.statusText}`);
+    if (!userResponse.ok) {
+      throw new Error(`Status ${userResponse.status} ${userResponse.statusText}`);
     }
 
-    if (!reposRes.ok) {
-      throw new Error(`Status ${reposRes.status} ${reposRes.statusText}`);
+    if (!repoResponse.ok) {
+      throw new Error(`Status ${repoResponse.status} ${repoResponse.statusText}`);
     }
 
-    const [users, repos] = await Promise.all([usersRes.json(), reposRes.json()]);
+    const [users, repos]: JSONResponse[] = await Promise.all([userResponse.json(), repoResponse.json()]);
     const items = [...users.items, ...repos.items];
 
     // Alphabetize users and repos
     items.sort((itemA, itemB) => {
-      const nameA: string = itemA.login ? itemA.login.toUpperCase() : itemA.full_name.toUpperCase();
-      const nameB: string = itemB.login ? itemB.login.toUpperCase() : itemB.full_name.toUpperCase();
+      const nameA = 'login' in itemA ? itemA.login.toUpperCase() : itemA.full_name.toUpperCase();
+      const nameB = 'login' in itemB ? itemB.login.toUpperCase() : itemB.full_name.toUpperCase();
 
       if (nameA < nameB) {
         return -1;

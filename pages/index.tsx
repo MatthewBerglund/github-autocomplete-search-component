@@ -2,12 +2,13 @@ import type { NextPage } from 'next';
 import { useState } from 'react';
 
 import GithubSearch from '../components/GithubSearch/GithubSearch';
+import { RepoData, UserData } from '../components/GithubSearch/scripts/fetchUsersAndRepos';
 
 const Home: NextPage = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
 
   // Example callback for handling the full list of suggestions
-  function displayAllSuggestions(suggestions: any[]) {
+  function displayAllSuggestions(suggestions: (UserData | RepoData)[]) {
     setSuggestions(suggestions);
   }
 
