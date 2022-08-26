@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
-  type: string,
+  type: 'info' | 'error',
   msg: string,
 }
 

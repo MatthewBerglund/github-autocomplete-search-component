@@ -1,9 +1,9 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import "whatwg-fetch";
+import 'whatwg-fetch';
 
 import GithubSearch from './GithubSearch';
 
@@ -48,8 +48,8 @@ test('it should not submit a search unless search query is at least 3 chars long
   render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
-  await userEvent.type(input, 'be', { delay: 0.5 });
 
+  await userEvent.type(input, 'be');
   expect(screen.queryByText(/searching\.\.\./i)).toBeNull();
 });
 
@@ -57,8 +57,8 @@ test('it should provide visual feedback when fetching data', async () => {
   render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
-  await userEvent.type(input, 'berg', { delay: 0.5 });
 
+  await userEvent.type(input, 'berg');
   expect(screen.getByText(/searching\.\.\./i)).toBeVisible();
 });
 
@@ -69,13 +69,14 @@ test('it should provide visual feedback when results are empty', async () => {
     }),
     rest.get('https://api.github.com/search/repositories', (req, res, ctx) => {
       return res(ctx.status(200), ctx.json({ items: [] }));
-    }));
+    })
+  );
 
   render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
-  await userEvent.type(input, 'berg', { delay: 0.5 });
 
+  await userEvent.type(input, 'berg');
   await waitFor(() => expect(screen.getByText(/0 results found\./i)).toBeVisible());
 });
 
@@ -93,7 +94,7 @@ test('it should provide visual feedback if an error occurs', async () => {
   const input = screen.getByRole('searchbox');
 
   try {
-    await userEvent.type(input, 'berg', { delay: 0.5 });
+    await userEvent.type(input, 'berg');
   } catch (err) {
     expect(screen.getByText(/unable to retrieve data\. please try again later\./i)).toBeVisible();
   }
@@ -103,9 +104,7 @@ test('it should display the correct number of suggestions', async () => {
   render(<GithubSearch onShowAllClick={(suggestions) => { }} />);
 
   const input = screen.getByRole('searchbox');
-  await userEvent.type(input, 'berg', { delay: 0.5 });
-  await waitFor(() => expect(screen.getAllByTestId('suggestion-li').length).toBe(5));
 
-  server.close();
-  server.resetHandlers();
+  await userEvent.type(input, 'berg');
+  await waitFor(() => expect(screen.getAllByTestId('suggestion-li').length).toBe(5));
 });

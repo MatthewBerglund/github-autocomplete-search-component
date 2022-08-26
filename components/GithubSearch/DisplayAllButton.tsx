@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
   isSelected: boolean,
@@ -6,11 +6,7 @@ interface Props {
   onMouseOver: () => void,
 }
 
-const DisplayAllButton: React.FC<Props> = ({
-  isSelected,
-  onClick,
-  onMouseOver,
-}) => {
+const DisplayAllButton: React.FC<Props> = ({ isSelected, onClick, onMouseOver }) => {
   return (
     <button
       type="button"

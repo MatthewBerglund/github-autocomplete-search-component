@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import Suggestion from './Suggestion';
 import DisplayAllButton from './DisplayAllButton';
@@ -20,32 +20,6 @@ const SuggestionList: React.FC<Props> = ({
   displayAllSuggestions,
   clearSearch
 }) => {
-  const navigateSuggestions = (keyboardEventCode: string) => {
-    if (suggestions) {
-      switch (keyboardEventCode) {
-        case 'ArrowDown':
-          if (suggestions.length > selectedIndex) {
-            setSelectedIndex(i => i + 1);
-          }
-          break;
-        case 'ArrowUp':
-          if (selectedIndex > 0) {
-            setSelectedIndex(i => i - 1);
-          }
-          break;
-        case 'Enter':
-          if (selectedIndex === numSuggestionsToDisplay) {
-            displayAllSuggestions();
-            clearSearch();
-          } else {
-            const selectedSuggestion = suggestions[selectedIndex];
-            window.open(selectedSuggestion.html_url, '_blank');
-            break;
-          }
-      }
-    }
-  };
-
   return (
     <ul className="max-h-fit" data-testid="suggestion-list">
       {suggestions.map((item, index) => {
